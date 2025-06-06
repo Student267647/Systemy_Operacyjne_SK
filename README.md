@@ -1,14 +1,20 @@
 # Systemy_Operacyjne_SK
 
 ### Instrukcje uruchomienia projektu
-#### Budowanie i uruchomienie ze Ÿróde³
+#### Budowanie i uruchomienie ze ÅºrÃ³deÅ‚
 Windows (Visual Studio 2022):
-1. Otwórz projekt w Visual Studio.
-2. W ustawieniach projektu dodaj argument uruchomieniowy (liczbê filozofów).
+1. OtwÃ³rz projekt w Visual Studio.
+2. W ustawieniach projektu dodaj argument uruchomieniowy (liczbÄ™ filozofÃ³w).
 3. Skompiluj i uruchom program.
 
+#### Kompilacja programu
+Do kompilacji moÅ¼na teÅ¼ uÅ¼yÄ‡ komendy.
+```
+g++ -std=c++17 -pthread ProblemJedzacychFilozofow.cpp -o ProblemJedzacychFilozofow
+```
+
 #### Uruchamianie z gotowego pliku exe
-Pobierz i uruchom gotowy plik binarny .exe z wiersza poleceñ wraz z argumentem (liczb¹ filozofów).
+Pobierz i uruchom gotowy plik binarny .exe z wiersza poleceÅ„ wraz z argumentem (liczbÄ… filozofÃ³w).
 ```
 .\ProblemJedzacychFilozofow.exe [liczba filozofow]
 ```
@@ -17,29 +23,29 @@ Np.
 .\ProblemJedzacychFilozofow.exe 7
 ```
 ### Opis problemu
-Problem jedz¹cych filozofów to klasyczne zagadnienie synchronizacji w programowaniu wielow¹tkowym.
-Podana iloœæ filozofów siedzi przy okr¹g³ym stole, miêdzy nimi znajduj¹ siê widelce. Ka¿dy filozof na zmianê myœli i je.
-Aby móg³ jeœæ, musi podnieœæ dwa widelce - lewy i prawy. Poniewa¿ ka¿dy widelec jest wspó³dzielony przez dwóch filozofów,
-mo¿e dojœæ do zakleszczenia (deadlock) – sytuacji, w której ka¿dy filozof trzyma jeden widelec i czeka na drugi, blokuj¹c siê nawzajem.
+Problem jedzÄ…cych filozofÃ³w to klasyczne zagadnienie synchronizacji w programowaniu wielowÄ…tkowym.
+Podana iloÅ›Ä‡ filozofÃ³w siedzi przy okrÄ…gÅ‚ym stole, miÄ™dzy nimi znajdujÄ… siÄ™ widelce. KaÅ¼dy filozof na zmianÄ™ myÅ›li i je.
+Aby mÃ³gÅ‚ jeÅ›Ä‡, musi podnieÅ›Ä‡ dwa widelce - lewy i prawy. PoniewaÅ¼ kaÅ¼dy widelec jest wspÃ³Å‚dzielony przez dwÃ³ch filozofÃ³w,
+moÅ¼e dojÅ›Ä‡ do zakleszczenia (deadlock) â€“ sytuacji, w ktÃ³rej kaÅ¼dy filozof trzyma jeden widelec i czeka na drugi, blokujÄ…c siÄ™ nawzajem.
 
-### Rozwi¹zanie problemu
-Aby unikn¹æ zakleszczenia, zastosowano mutexy (std\::mutex) i mechanizm (std\::lock()) do blokowania obu widelców jednoczeœnie.
-Dziêki temu ¿aden filozof nie pozostanie w stanie, w którym trzyma jeden widelec i czeka na drugi.
+### RozwiÄ…zanie problemu
+Aby uniknÄ…Ä‡ zakleszczenia, zastosowano mutexy (std\::mutex) i mechanizm (std\::lock()) do blokowania obu widelcÃ³w jednoczeÅ›nie.
+DziÄ™ki temu Å¼aden filozof nie pozostanie w stanie, w ktÃ³rym trzyma jeden widelec i czeka na drugi.
 
-### W¹tki
-W programie dla ka¿dego filozofa powstaje osobny w¹tek, 
-który w niekoñcz¹cej siê pêtli wykonuje kolejno zajêcia filozofa: myœlenie, czekanie na widelce, jedzenie.
-Myœlenie - filozof czeka przez losowy czas.
-Czekanie na widelce - filozof czeka, a¿ oba widelce bêd¹ dostêpne i bêdzie móg³ je zablokowaæ.
-Jedzenie - po udanym podniesieniu obu widelców je przez pewien czas, a nastêpnie odk³ada widelce (odblokowuje mutexy).
+### WÄ…tki
+W programie dla kaÅ¼dego filozofa powstaje osobny wÄ…tek, 
+ktÃ³ry w niekoÅ„czÄ…cej siÄ™ pÄ™tli wykonuje kolejno zajÄ™cia filozofa: myÅ›lenie, czekanie na widelce, jedzenie.
+MyÅ›lenie - filozof czeka przez losowy czas.
+Czekanie na widelce - filozof czeka, aÅ¼ oba widelce bÄ™dÄ… dostÄ™pne i bÄ™dzie mÃ³gÅ‚ je zablokowaÄ‡.
+Jedzenie - po udanym podniesieniu obu widelcÃ³w je przez pewien czas, a nastÄ™pnie odkÅ‚ada widelce (odblokowuje mutexy).
 
 ### Sekcje krytyczne
-Sekcj¹ krytyczn¹ w programie jest moment podniesienia dwóch widelców przez filozofa.
-Ze wzglêdu na to, ¿e widelce s¹ wspó³dzielone miêdzy parami w¹tków, 
-ich liczba jest równa liczbie w¹tków oraz w¹tki potrzebuj¹ dwóch widelców do jedzenia musimy zapobiec sytuacji,
-w której ka¿dy w¹tek zabiera jeden widelec i czeka na drugi, którego nigdy nie otrzyma.
-#### Rozwi¹zanie sekcji krytycznej
-Aby unikn¹æ podanej sytuacji zastosowano std\::mutex (mutual exclusion) dla widelców, 
-tak aby ¿aden filozof nie móg³ zabraæ pojedynczego widelca, a tylko dwa gdy oba s¹ dostêpne.
-W tym celu zastosowano std\::lock(leftFork, rightFork), aby zablokowaæ oba mutexy lub ¿adnego, 
-oraz std\::lock_guard\<std\::mutex> i std\::adopt_lock, aby automatycznie zwolniæ je po u¿yciu.
+SekcjÄ… krytycznÄ… w programie jest moment podniesienia dwÃ³ch widelcÃ³w przez filozofa.
+Ze wzglÄ™du na to, Å¼e widelce sÄ… wspÃ³Å‚dzielone miÄ™dzy parami wÄ…tkÃ³w, 
+ich liczba jest rÃ³wna liczbie wÄ…tkÃ³w oraz wÄ…tki potrzebujÄ… dwÃ³ch widelcÃ³w do jedzenia musimy zapobiec sytuacji,
+w ktÃ³rej kaÅ¼dy wÄ…tek zabiera jeden widelec i czeka na drugi, ktÃ³rego nigdy nie otrzyma.
+#### RozwiÄ…zanie sekcji krytycznej
+Aby uniknÄ…Ä‡ podanej sytuacji zastosowano std\::mutex (mutual exclusion) dla widelcÃ³w, 
+tak aby Å¼aden filozof nie mÃ³gÅ‚ zabraÄ‡ pojedynczego widelca, a tylko dwa gdy oba sÄ… dostÄ™pne.
+W tym celu zastosowano std\::lock(leftFork, rightFork), aby zablokowaÄ‡ oba mutexy lub Å¼adnego, 
+oraz std\::lock_guard\<std\::mutex> i std\::adopt_lock, aby automatycznie zwolniÄ‡ je po uÅ¼yciu.
